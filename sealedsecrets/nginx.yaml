@@ -18,6 +18,7 @@ metadata:
   name: nginx-dpl
   labels:
     run: nginx
+  namespace: sealedsecrets
 spec:
   replicas: 1
   selector:
@@ -54,6 +55,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: htpasswd
+  namespace: sealedsecrets
 data:
   index.html: |
     <h1>Hello</h1>
@@ -62,6 +64,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: nginx-config
+  namespace: sealedsecrets
 data:
   htpasswd: |
     user1:$apr1$/woC1jnP$KAh0SsVn5qeSMjTtn0E9Q0
