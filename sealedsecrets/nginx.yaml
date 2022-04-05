@@ -37,8 +37,8 @@ spec:
           name: nginx
           resources: {}
           volumeMounts:
-#            - mountPath: /usr/share/nginx/html
-#              name: htpasswd
+            - mountPath: /usr/share/nginx/html
+              name: htpasswd
             - mountPath: /etc/nginx
               name: config
       dnsPolicy: ClusterFirst
@@ -93,11 +93,11 @@ spec:
     - host: raspberrypi.local
       http:
         paths:
-          - path: /
+          - path: /nginx
             pathType: Prefix
             backend:
               service:
                 name:  nginx
                 port:
-                  number: 8080
+                  number: 80
 
