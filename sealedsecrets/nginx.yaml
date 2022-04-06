@@ -92,7 +92,7 @@ spec:
     - host: raspberrypi.local
       http:
         paths:
-          - path: /nginx
+          - path: /
             pathType: Prefix
             backend:
               service:
