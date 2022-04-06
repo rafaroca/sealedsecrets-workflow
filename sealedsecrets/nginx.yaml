@@ -6,7 +6,7 @@ metadata:
 spec:
   type: ClusterIP
   selector:
-    run: nginx
+    run: nginx-svc
   ports:
     - protocol: TCP
       port: 80
@@ -97,7 +97,7 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name:  nginx
+                name:  nginx-svc
                 port:
                   number: 80
 
