@@ -36,7 +36,7 @@ spec:
           name: nginx
           resources: {}
           volumeMounts:
-            - mountPath: /usr/share/nginx/html
+            - mountPath: /etc/nginx-htpasswd
               name: htpasswd
             - mountPath: /etc/nginx
               name: config
@@ -45,7 +45,7 @@ spec:
       volumes:
         - name: htpasswd
           configMap:
-            name: htpasswd
+            name: nginx-htpasswd
         - name: config
           configMap:
             name: nginx-config
