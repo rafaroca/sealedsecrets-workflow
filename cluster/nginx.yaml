@@ -4,12 +4,12 @@ metadata:
   name: nginx-svc
   namespace: default
 spec:
-  type: ClusterIP
+  type: NodePort
   selector:
     run: nginx
   ports:
     - protocol: TCP
-      port: 80
+      port: 8080
       name: http
       targetPort: 80
 ---
