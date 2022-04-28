@@ -44,8 +44,8 @@ spec:
       restartPolicy: Always
       volumes:
         - name: htpasswd
-          configMap:
-            name: nginx-htpasswd
+          secret:
+            secretName: nginx-htpasswd
         - name: config
           configMap:
             name: nginx-config
