@@ -1,6 +1,6 @@
 # sealedsecrets-workflow
 
-Showing how to work with SealedSecrets in a GitOps environment.
+Demonstrating a GitOps workflow with SealedSecrets.
 
 ## Installing a Kubernetes cluster
 
@@ -18,13 +18,18 @@ You will need to enable port forwarding to reach the webserver running inside th
 If you want to reach the cluster directly from your host, you need to enable an Ingress Controller on your cluster.
 There is [extensive documentation](https://minikube.sigs.k8s.io/docs/tutorials/nginx_tcp_udp_ingress/) on how to do this on Minikube.
 
+## Preparing the git repository for GitOps
+
+- Fork this GitHub repository
+- Clone the repository to your local machine
+- Create a Personal Access Token on the [GitHub Developer Settings](https://github.com/settings/tokens). It needs the `write:public_key` scope to create a new public key for itself.
+
 ## Installing flux
 
-Install the `flux` command line tool as explained in the [flux installation documentation](https://fluxcd.io/docs/installation/#install-the-flux-cli).
+- Install the `flux` command line tool as explained in the [flux installation documentation](https://fluxcd.io/docs/installation/#install-the-flux-cli).
+- Bootstrap your local minikube cluster with `flux bootstrap github --owner=<your_user_name> --repository=sealedsecrets-workflow --path=cluster`
 
-- Clone this GitHub Repository
-- Create a Personal Access Token on the [GitHub Developer Settings](https://github.com/settings/tokens). It needs the `write:public_key` scope to create a new key for itself.
-- Install flux with `flux bootstrap github --owner=<your_user_name> --repository=sealedsecrets-workflow --path=cluster`
+This will set up your minikube cluster with the configuration that is contained within the `cluster` path of your GitHub repository. Your cluster will periodically check for changes on GitHub.
 
 ## Create a sealed secret
 
@@ -39,7 +44,7 @@ Install the `kubeseal` command line tool as explained in the [sealed secrets doc
 
 Set up a port forward with `kubectl port-forward service/nginx-svc 8888:80`.
 Directing your browser to [http://localhost:8888](http://localhost:8888) asks for the login credentials.
-Enter `user1` as username and as password to view the nginx default page.
+Enter `user1` as username and also `user1` as password to view the nginx default page.
 
 # Note on security
 
@@ -50,5 +55,5 @@ Rotate the secret and re-seal it.
 
 When using SealedSecrets, you have to take caution to never commit secrets to git repositories.
 A pre-commit hook which scans for secrets can be a first barrier.
-Also use secret detection in your CI/CD pipeline.
+Secret detection in your CI/CD pipeline can alert you when secrets were published to your repository.
 
