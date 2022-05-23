@@ -33,27 +33,38 @@ This will set up your minikube cluster with the configuration that is contained 
 
 ## Create a sealed secret
 
-Install the `kubeseal` command line tool as explained in the [sealed secrets documentation](https://github.com/bitnami-labs/sealed-secrets/#homebrew).
+- Install the `kubeseal` command line tool as explained in the [sealed secrets documentation](https://github.com/bitnami-labs/sealed-secrets/#homebrew).
+- The following command creates a valid `htpasswd` file using the `openssl` command. The `kubectl create` command generates a Kubernetes secret out of the password. The secret is finally encrypted into a SealedSecret with the `kubeseal` command and saved into a file in the `cluster` directory.
 
-- Seal the htpasswd secret with `kubeseal -o yaml <nginx-htpasswd.yaml >cluster/nginx-htpasswd-sealed.yaml` 
-- Commit the new file to git and push the changes to GitHub.
+```
+	USERNAME=user \
+    PASSWORD=weakpassword \
+    HTPASSWD=$USERNAME:$(openssl passwd -1 $PASSWORD) \
+    kubectl create secret generic nginx-htpasswd \
+      --namespace default \
+      --from-literal=htpasswd=$HTPASSWD \
+      --output=yaml \
+      --dry-run=client \
+    | kubeseal -o yaml \
+    > ./cluster/nginx-htpasswd-sealed.yaml
+```
+
+- Add the new to git, commit and push the changes to GitHub.
 - Flux takes up the new changes from GitHub and the SealedSecrets controller decrypts the SealedSecret into a Kubernetes secret.
-- The nginx pod now starts up
+- The nginx pod now starts up.
 
 ## Connect to nginx
 
 Set up a port forward with `kubectl port-forward service/nginx-svc 8888:80`.
 Directing your browser to [http://localhost:8888](http://localhost:8888) asks for the login credentials.
-Enter `user1` as username and also `user1` as password to view the nginx default page.
+Enter `user` as username and `weakpassword` as password to view the nginx default page.
 
 # Note on security
 
-The `nginx-htpasswd.yaml` file is committed to the repository for demonstration only.
-A real usage would only ever contain the sealed `nginx-htpasswd-sealed.yaml` file.
-If a secret was ever pushed to a git repository, it must be considered as compromised.
-Rotate the secret and re-seal it.
-
+The `htpasswd` secret in this example is purposefully never written to the repository. 
 When using SealedSecrets, you have to take caution to never commit secrets to git repositories.
 A pre-commit hook which scans for secrets can be a first barrier.
 Secret detection in your CI/CD pipeline can alert you when secrets were published to your repository.
 
+If a secret was pushed to a git repository, it must be considered compromised.
+Rotate the secret and re-seal it.
