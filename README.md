@@ -39,7 +39,7 @@ This will set up your minikube cluster with the configuration that is contained 
 ```
 	USERNAME=user \
     PASSWORD=weakpassword \
-    HTPASSWD=$USERNAME:$(openssl passwd -1 $PASSWORD) \
+    HTPASSWD=$USERNAME:$(openssl passwd -apr1 $PASSWORD) \
     kubectl create secret generic nginx-htpasswd \
       --namespace default \
       --from-literal=htpasswd=$HTPASSWD \
